@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -10,32 +10,33 @@ class OperationalCategorySeeder extends Seeder
 {
     public function run(): void
     {
-        // Pastikan nama 'icon' sesuai dengan 'name' di file category-config.tsx frontend
+        $user = User::where('role', 'demo')->first();
+
         DB::table('operational_categories')->insert([
             [
-                'user_id' => 1,
+                'user_id' => $user->id,
                 'name' => 'Makan & Minum',
                 'budget_limit' => 1500,
-                'icon' => 'utensils', // Sebelumnya pi-shopping-cart -> ganti jadi 'utensils' (Lucide)
-                'color' => '#22c55e', // Green
+                'icon' => 'utensils',
+                'color' => '#22c55e',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'user_id' => 1,
+                'user_id' => $user->id,
                 'name' => 'Transportasi',
-                'budget_limit' => 800,
-                'icon' => 'bus', // Sebelumnya pi-car -> ganti jadi 'bus' (sesuai config)
-                'color' => '#3b82f6', // Blue
+                'budget_limit' => 300,
+                'icon' => 'bus',
+                'color' => '#3b82f6',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
-                'user_id' => 1,
+                'user_id' => $user->id,
                 'name' => 'Tagihan Rutin',
-                'budget_limit' => 2000,
-                'icon' => 'zap', // Sebelumnya pi-wallet -> ganti jadi 'zap' (listrik/tagihan)
-                'color' => '#f97316', // Orange
+                'budget_limit' => 1000,
+                'icon' => 'zap',
+                'color' => '#f97316',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
