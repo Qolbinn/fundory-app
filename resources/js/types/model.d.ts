@@ -10,6 +10,7 @@ export interface OperationalCategory {
 
 // 2. Definisikan Transaksi Utama
 export interface OperationalTransaction {
+    category: OperationalCategory | null;
     id: number;
     user_id: number;
     date: string; // Tanggal dari JSON biasanya string

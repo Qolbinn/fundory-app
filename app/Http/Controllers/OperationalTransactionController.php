@@ -3,23 +3,37 @@
 namespace App\Http\Controllers;
 
 use App\Models\OperationalTransaction;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class OperationalTransactionController extends Controller
 {
-    //
 
-    public function index()
+    public function index(Request $request)
     {
+        // 1. Tentukan Range Tanggal
+        // Jika user kirim params, pakai itu. Jika tidak, pakai Default (Awal Bulan - Hari Ini).
+        if ($request->filled(['start_date', 'end_date'])) {
+            $startDate = $request->input('start_date');
+            $endDate = $request->input('end_date');
+        } else {
+            $startDate = Carbon::now()->startOfMonth()->format('Y-m-d');
+            $endDate = Carbon::now()->format('Y-m-d');
+        }
+
+        // 2. Build Query
         $transactions = OperationalTransaction::query()
-            ->with('category') // Eager load biar gak N+1 Query
-            ->latest('date')   // Urutkan tanggal terbaru
-            ->paginate(10)     // Server-side pagination
-            ->through(fn($txn) => [
+            ->with('category')
+            // Filter berdasarkan range tanggal yang sudah ditentukan di atas
+            ->whereDate('date', '>=', $startDate)
+            ->whereDate('date', '<=', $endDate)
+            ->latest('date')
+            ->get()
+            ->map(fn($txn) => [
                 'id' => $txn->id,
-                'date' => $txn->date, // Atau format di sini: $txn->date->format('d M Y')
+                'date' => $txn->date,
                 'amount' => $txn->amount,
-                'type' => $txn->type, // Pastikan ini string/enum value
+                'type' => $txn->type,
                 'operational_category_id' => $txn->operational_category_id,
                 'category' => $txn->category ? [
                     'name' => $txn->category->name,
@@ -29,8 +43,15 @@ class OperationalTransactionController extends Controller
                 'note' => $txn->note,
             ]);
 
+        // 3. Return Inertia
         return inertia('Dashboard/Operational/OperationalTransaction', [
             'transactions' => $transactions,
+            // (Opsional tapi Recommended) Kirim balik range tanggal ke Frontend
+            // agar DatePicker UI tahu tanggal apa yang sedang aktif/default.
+            'filters' => [
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+            ]
         ]);
     }
 
