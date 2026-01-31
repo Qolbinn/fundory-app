@@ -15,7 +15,7 @@ import { ArrowUpDown, MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 
 interface TableMeta {
     onEdit: (data: OperationalTransaction) => void;
-    // onDelete: (data: OperationalTransaction) => void;
+    onDelete: (data: OperationalTransaction) => void;
 }
 
 // 2. Definisikan Kolom
@@ -163,7 +163,9 @@ export const operationalColumns: ColumnDef<OperationalTransaction>[] = [
                         >
                             <Pencil className="mr-2 h-4 w-4" /> Edit
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={() => meta?.onDelete(transaction)}
+                        >
                             <Trash2 className="mr-2 h-4 w-4" /> Delete
                         </DropdownMenuItem>
                     </DropdownMenuContent>

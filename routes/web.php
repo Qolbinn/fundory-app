@@ -33,7 +33,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::prefix('operational')->name('operational.')->group(function () {
             Route::post('/', 'store')->name('store');
             Route::put('/{transaction}', 'update')->name('update');
-            Route::delete('/{transaction}', 'destroy')->name('destroy');
+            Route::delete('/destroy/bulk', OperationalTransactionController::class . '@bulkDelete')
+                ->name('bulk-delete');
         });
     });
 

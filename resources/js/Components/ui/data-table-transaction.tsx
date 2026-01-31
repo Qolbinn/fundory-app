@@ -27,7 +27,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/Components/ui/table';
-import { Columns3 } from 'lucide-react';
+import { Columns3, Trash2 } from 'lucide-react';
 import * as React from 'react';
 import DateFilter from '../DateFilter';
 import { Button } from './button';
@@ -38,6 +38,7 @@ interface DataTableProps<TData, TValue> {
     data: TData[];
     meta?: any;
     onCreate?: () => void;
+    onBulkDelete?: (ids: number[]) => void;
     searchKey?: string;
     searchPlaceholder?: string;
 }
@@ -47,6 +48,7 @@ export function DataTableTransaction<TData, TValue>({
     data,
     meta,
     onCreate,
+    onBulkDelete,
     searchKey = 'note',
     searchPlaceholder = 'Cari catatan...',
 }: DataTableProps<TData, TValue>) {
@@ -60,6 +62,7 @@ export function DataTableTransaction<TData, TValue>({
     const table = useReactTable({
         data,
         columns,
+        enableRowSelection: true,
         getCoreRowModel: getCoreRowModel(),
         onSortingChange: setSorting,
         getSortedRowModel: getSortedRowModel(),
@@ -76,6 +79,24 @@ export function DataTableTransaction<TData, TValue>({
         },
         meta: meta,
     });
+
+    // Helper untuk menangkap ID dari row yang dipilih
+    const handleBulkDeleteClick = () => {
+        if (!onBulkDelete) return;
+
+        // Ambil row yang dicentang
+        const selectedRows = table.getFilteredSelectedRowModel().rows;
+
+        // Mapping ke Array ID (Pastikan TData punya properti 'id')
+        // Kita pakai 'as any' aman disini jika kita yakin datanya punya ID,
+        // atau gunakan Interface TData extends { id: number }
+        const ids = selectedRows.map((row) => (row.original as any).id);
+
+        if (ids.length > 0) {
+            onBulkDelete(ids);
+            table.resetRowSelection();
+        }
+    };
 
     return (
         <div>
@@ -95,6 +116,21 @@ export function DataTableTransaction<TData, TValue>({
                     }
                     className="max-w-sm"
                 />
+
+                {/* --- TOMBOL BULK DELETE (Muncul jika ada yang dipilih) --- */}
+                {table.getFilteredSelectedRowModel().rows.length > 0 &&
+                    onBulkDelete && (
+                        <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={handleBulkDeleteClick}
+                            className="ml-2 transition-all"
+                        >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Hapus (
+                            {table.getFilteredSelectedRowModel().rows.length})
+                        </Button>
+                    )}
 
                 {/* Filter Kolom */}
                 <DropdownMenu>

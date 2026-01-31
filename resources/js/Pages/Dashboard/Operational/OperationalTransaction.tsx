@@ -1,8 +1,18 @@
 import { OperationalDialog } from '@/Components/DialogOperationalForm';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/Components/ui/alert-dialog';
 import { DataTableTransaction } from '@/Components/ui/data-table-transaction';
 import DashboardLayout from '@/Layouts/DashboardLayout';
 import type { OperationalTransaction } from '@/types/model';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { useCallback, useState } from 'react';
 import { operationalColumns } from './columns';
 
@@ -15,6 +25,8 @@ export default function OperationalTransaction({ transactions }: IndexProps) {
     const [isDialogOpen, setDialogOpen] = useState(false);
     const [selectedTransaction, setSelectedTransaction] =
         useState<OperationalTransaction | null>(null);
+    const [isAlertOpen, setAlertOpen] = useState(false);
+    const [deletingIds, setDeletingIds] = useState<number[]>([]);
 
     // 2. Handler untuk Membuka Modal
     const handleCreate = () => {
@@ -28,43 +40,30 @@ export default function OperationalTransaction({ transactions }: IndexProps) {
         setDialogOpen(true);
     }, []);
 
-    // --- BEST PRACTICE DEFINITION ---
-    // const columns = useMemo(
-    //     () => [
-    //         ...operationalColumns, // 1. Masukkan kolom dasar
-    //         {
-    //             id: 'actions_1',
-    //             header: 'Aksi',
-    //             cell: ({ row }) => {
-    //                 const transaction = row.original;
+    const handleDeleteSingle = useCallback(
+        (transaction: OperationalTransaction) => {
+            setDeletingIds([transaction.id]); // Masukkan 1 ID saja
+            setAlertOpen(true); // Buka Alert
+        },
+        [],
+    );
 
-    //                 return (
-    //                     <div className="flex justify-end gap-2">
-    //                         {/* Tombol Edit */}
-    //                         <Button
-    //                             variant="ghost"
-    //                             size="icon"
-    //                             onClick={() => handleEdit(transaction)} // Akses state parent langsung!
-    //                             className="h-8 w-8 text-blue-600"
-    //                         >
-    //                             <Pencil className="h-4 w-4" />
-    //                         </Button>
+    // 3. Handler Trigger Delete Bulk (dari DataTable)
+    const handleBulkDelete = useCallback((ids: number[]) => {
+        setDeletingIds(ids); // Masukkan banyak ID
+        setAlertOpen(true); // Buka Alert
+    }, []);
 
-    //                         {/* Tombol Delete (Nanti) */}
-    //                         <Button
-    //                             variant="ghost"
-    //                             size="icon"
-    //                             className="h-8 w-8 text-red-600"
-    //                         >
-    //                             <Trash2 className="h-4 w-4" />
-    //                         </Button>
-    //                     </div>
-    //                 );
-    //             },
-    //         },
-    //     ],
-    //     [handleEdit],
-    // ); // 2. Dependency Array: Kolom dibuat ulang hanya jika handleEdit berubah
+    const confirmDelete = () => {
+        router.delete(route('operational.bulk-delete'), {
+            data: { ids: deletingIds },
+            onSuccess: () => {
+                setAlertOpen(false);
+                setDeletingIds([]);
+            },
+            preserveScroll: true,
+        });
+    };
 
     return (
         <DashboardLayout
@@ -79,10 +78,11 @@ export default function OperationalTransaction({ transactions }: IndexProps) {
                 columns={operationalColumns}
                 data={transactions}
                 meta={{
-                    onEdit: handleEdit, // Lempar fungsi handleEdit ke table
-                    // onDelete: handleDelete  // Lempar fungsi handleDelete ke table
+                    onEdit: handleEdit,
+                    onDelete: handleDeleteSingle,
                 }}
                 onCreate={handleCreate}
+                onBulkDelete={handleBulkDelete}
                 searchKey="note"
                 searchPlaceholder="Cari catatan..."
             />
@@ -93,6 +93,32 @@ export default function OperationalTransaction({ transactions }: IndexProps) {
                 onOpenChange={setDialogOpen}
                 transactionToEdit={selectedTransaction}
             />
+
+            {/* --- ALERT DIALOG KONFIRMASI --- */}
+            <AlertDialog open={isAlertOpen} onOpenChange={setAlertOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Apakah Anda yakin?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Tindakan ini tidak dapat dibatalkan. Ini akan
+                            menghapus{' '}
+                            <span className="font-bold text-red-600">
+                                {deletingIds.length} data
+                            </span>{' '}
+                            transaksi secara permanen.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Batal</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={confirmDelete}
+                            className="bg-red-600 hover:bg-red-700"
+                        >
+                            Hapus
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </DashboardLayout>
     );
 }

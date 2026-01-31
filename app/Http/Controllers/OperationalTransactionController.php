@@ -77,7 +77,6 @@ class OperationalTransactionController extends Controller
 
     public function update(Request $request, OperationalTransaction $transaction)
     {
-        // dd($transaction);
         // Pastikan user hanya bisa edit punya sendiri
         if ($transaction->user_id !== auth()->id()) {
             abort(403);
@@ -95,5 +94,18 @@ class OperationalTransactionController extends Controller
 
 
         return redirect()->back()->with('success', 'Transaksi berhasil diperbarui.');
+    }
+
+    public function bulkDelete(Request $request)
+    {
+        // Validasi input harus berupa array ID
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:operational_transactions,id', // Pastikan ID valid
+        ]);
+
+        OperationalTransaction::whereIn('id', $request->input('ids'))->delete();
+
+        return redirect()->back()->with('message', 'Data berhasil dihapus.');
     }
 }
