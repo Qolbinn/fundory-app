@@ -5,6 +5,6 @@ namespace App\Enums;
 enum AssetCategoryType: string
 {
     case INCOME = 'INCOME';
-    case GROWTH = 'GROWTH';
-    case DRAIN  = 'DRAIN';
+    case INVEST = 'INVEST';
+    case EXPENSE = 'EXPENSE';
 }

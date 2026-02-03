@@ -2,12 +2,16 @@ import { DialogOperationalCategoryForm } from '@/Components/DialogOperationalCat
 import { Button } from '@/Components/ui/button';
 import { Card } from '@/Components/ui/card';
 import DashboardLayout from '@/Layouts/DashboardLayout';
-import { getIconComponent } from '@/Lib/operational-category-config';
+import { getOperationalIconComponent } from '@/Lib/operational-category-config';
 import { Head } from '@inertiajs/react';
 import { Pencil, Plus } from 'lucide-react';
 import { useState } from 'react';
 
-export default function CategoryIndex({ categories }: { categories: any[] }) {
+export default function OperationalCategoryIndex({
+    categories,
+}: {
+    categories: any[];
+}) {
     const [isDialogOpen, setDialogOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState<any>(null);
 
@@ -41,7 +45,9 @@ export default function CategoryIndex({ categories }: { categories: any[] }) {
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                     {categories.map((category) => {
-                        const IconComponent = getIconComponent(category.icon);
+                        const IconComponent = getOperationalIconComponent(
+                            category.icon,
+                        );
 
                         return (
                             <Card

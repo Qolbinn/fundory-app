@@ -70,6 +70,7 @@ export default function OperationalTransaction({ transactions }: IndexProps) {
             header={
                 <h2 className="text-xl font-semibold">Transaksi Operasional</h2>
             }
+            enableDateFilter={true}
         >
             <Head title="Transaksi Operasional" />
 

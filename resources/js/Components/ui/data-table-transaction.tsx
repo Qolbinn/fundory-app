@@ -161,8 +161,7 @@ export function DataTableTransaction<TData, TValue>({
                 </DropdownMenu>
 
                 {/* Filter Date */}
-
-                <DateFilter />
+                {/* <DateFilter /> */}
 
                 {/* Add Transaction */}
                 {onCreate && (

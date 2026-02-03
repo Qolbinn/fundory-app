@@ -24,3 +24,13 @@ export interface OperationalTransaction {
     // Field tambahan dari formatting Controller (hasil 'through')
     formatted_date?: string;
 }
+
+export interface AssetTransaction {
+    id: number;
+    user_id: number;
+    date: string; // Tanggal dari JSON biasanya string
+    amount: number;
+    type: 'INCOME' | 'EXPENSE' | 'INVEST';
+    note: string | null;
+    formatted_date?: string;
+}

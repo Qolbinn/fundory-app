@@ -9,10 +9,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AssetCategory extends Model
 {
-    protected $fillable = ['user_id', 'name', 'type', 'target_percentage', 'icon', 'color'];
+    protected $fillable = ['user_id', 'name', 'type', 'is_rotation', 'icon', 'color'];
 
     protected $casts = [
         'type' => AssetCategoryType::class,
+        'is_rotation' => 'boolean',
     ];
 
     public function user(): BelongsTo

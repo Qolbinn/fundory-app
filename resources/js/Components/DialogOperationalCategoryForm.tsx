@@ -1,9 +1,12 @@
 import {
-    AVAILABLE_COLORS,
-    AVAILABLE_ICONS,
-    getIconComponent,
+    AVAILABLE_OPERATIONAL_COLORS,
+    AVAILABLE_OPERATIONAL_ICONS,
+    getOperationalIconComponent,
 } from '@/Lib/operational-category-config';
-import { CategoryFormValues, categorySchema } from '@/schema/operational';
+import {
+    OperationalCategoryFormValue,
+    operationalCategorySchema,
+} from '@/schema/operational';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from '@inertiajs/react';
 import { useEffect } from 'react';
@@ -45,8 +48,8 @@ export function DialogOperationalCategoryForm({
 }: Props) {
     const isEditing = !!categoryToEdit;
 
-    const form = useForm<CategoryFormValues>({
-        resolver: zodResolver(categorySchema),
+    const form = useForm<OperationalCategoryFormValue>({
+        resolver: zodResolver(operationalCategorySchema),
         defaultValues: {
             name: '',
             icon: 'tag',
@@ -62,7 +65,7 @@ export function DialogOperationalCategoryForm({
     const hasBudget = form.watch('has_budget');
 
     // Helper render Icon Component Dynamic
-    const PreviewIcon = getIconComponent(selectedIconName);
+    const PreviewIcon = getOperationalIconComponent(selectedIconName);
 
     useEffect(() => {
         if (open) {
@@ -88,7 +91,7 @@ export function DialogOperationalCategoryForm({
         }
     }, [open, categoryToEdit, form]);
 
-    const onSubmit = (values: CategoryFormValues) => {
+    const onSubmit = (values: OperationalCategoryFormValue) => {
         // Bersihkan data sebelum kirim
         const payload = {
             ...values,
@@ -174,28 +177,32 @@ export function DialogOperationalCategoryForm({
                                             defaultValue={field.value}
                                             className="grid grid-cols-6 gap-2"
                                         >
-                                            {AVAILABLE_ICONS.map((icon) => (
-                                                <FormItem key={icon.name}>
-                                                    <FormControl>
-                                                        <RadioGroupItem
-                                                            value={icon.name}
-                                                            id={`icon-${icon.name}`}
-                                                            className="peer sr-only" // Sembunyikan radio bulat aslinya
-                                                        />
-                                                    </FormControl>
-                                                    <FormLabel
-                                                        htmlFor={`icon-${icon.name}`}
-                                                        className={cn(
-                                                            'flex cursor-pointer flex-col items-center justify-center gap-1 rounded-md border-2 border-muted bg-popover p-2 transition-all hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary',
-                                                            field.value ===
-                                                                icon.name &&
-                                                                'border-primary bg-primary/5',
-                                                        )}
-                                                    >
-                                                        <icon.component className="h-5 w-5" />
-                                                    </FormLabel>
-                                                </FormItem>
-                                            ))}
+                                            {AVAILABLE_OPERATIONAL_ICONS.map(
+                                                (icon) => (
+                                                    <FormItem key={icon.name}>
+                                                        <FormControl>
+                                                            <RadioGroupItem
+                                                                value={
+                                                                    icon.name
+                                                                }
+                                                                id={`icon-${icon.name}`}
+                                                                className="peer sr-only" // Sembunyikan radio bulat aslinya
+                                                            />
+                                                        </FormControl>
+                                                        <FormLabel
+                                                            htmlFor={`icon-${icon.name}`}
+                                                            className={cn(
+                                                                'flex cursor-pointer flex-col items-center justify-center gap-1 rounded-md border-2 border-muted bg-popover p-2 transition-all hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary',
+                                                                field.value ===
+                                                                    icon.name &&
+                                                                    'border-primary bg-primary/5',
+                                                            )}
+                                                        >
+                                                            <icon.component className="h-5 w-5" />
+                                                        </FormLabel>
+                                                    </FormItem>
+                                                ),
+                                            )}
                                         </RadioGroup>
                                     </FormControl>
                                     <FormMessage />
@@ -216,25 +223,27 @@ export function DialogOperationalCategoryForm({
                                             defaultValue={field.value}
                                             className="flex flex-wrap gap-3"
                                         >
-                                            {AVAILABLE_COLORS.map((color) => (
-                                                <FormItem key={color}>
-                                                    <FormControl>
-                                                        <RadioGroupItem
-                                                            value={color}
-                                                            id={`color-${color}`}
-                                                            className="peer sr-only"
+                                            {AVAILABLE_OPERATIONAL_COLORS.map(
+                                                (color) => (
+                                                    <FormItem key={color}>
+                                                        <FormControl>
+                                                            <RadioGroupItem
+                                                                value={color}
+                                                                id={`color-${color}`}
+                                                                className="peer sr-only"
+                                                            />
+                                                        </FormControl>
+                                                        <FormLabel
+                                                            htmlFor={`color-${color}`}
+                                                            className="block h-8 w-8 cursor-pointer rounded-full ring-offset-2 transition-all hover:scale-110 peer-data-[state=checked]:ring-2 peer-data-[state=checked]:ring-primary"
+                                                            style={{
+                                                                backgroundColor:
+                                                                    color,
+                                                            }}
                                                         />
-                                                    </FormControl>
-                                                    <FormLabel
-                                                        htmlFor={`color-${color}`}
-                                                        className="block h-8 w-8 cursor-pointer rounded-full ring-offset-2 transition-all hover:scale-110 peer-data-[state=checked]:ring-2 peer-data-[state=checked]:ring-primary"
-                                                        style={{
-                                                            backgroundColor:
-                                                                color,
-                                                        }}
-                                                    />
-                                                </FormItem>
-                                            ))}
+                                                    </FormItem>
+                                                ),
+                                            )}
                                         </RadioGroup>
                                     </FormControl>
                                     <FormMessage />

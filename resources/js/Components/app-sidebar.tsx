@@ -52,12 +52,12 @@ const data = {
             icon: Frame,
         },
         {
-            name: 'Transaksi Operaional',
+            name: 'Transaksi Operasional',
             url: route('operational.transaction'),
             icon: PieChart,
         },
         {
-            name: 'Kategori & Anggaran',
+            name: 'Kategori Operasional',
             url: route('operational.category'),
             icon: Map,
         },
@@ -70,12 +70,12 @@ const data = {
         },
         {
             name: 'Transaksi Asset',
-            url: '#',
+            url: route('asset.transaction'),
             icon: PieChart,
         },
         {
             name: 'Kategori Asset',
-            url: '#',
+            url: route('asset.category'),
             icon: Map,
         },
     ],

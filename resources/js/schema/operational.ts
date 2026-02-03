@@ -23,15 +23,12 @@ export const operationalSchema = z
                 });
             }
         }
-
-        // 3. Logic: Jika tipe INCOME, kita bisa abaikan category (atau force null nanti di controller)
-        // Tidak perlu validasi error disini, karena income memang boleh kosong.
     });
 
 // Export type-nya biar bisa dipakai di Form
 export type OperationalFormValues = z.infer<typeof operationalSchema>;
 
-export const categorySchema = z
+export const operationalCategorySchema = z
     .object({
         name: z.string().min(1, 'Nama kategori wajib diisi'),
 
@@ -57,4 +54,6 @@ export const categorySchema = z
         }
     });
 
-export type CategoryFormValues = z.infer<typeof categorySchema>;
+export type OperationalCategoryFormValue = z.infer<
+    typeof operationalCategorySchema
+>;

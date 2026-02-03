@@ -5,70 +5,112 @@ import {
     Card,
     CardContent,
     CardDescription,
-    // CardFooter,
     CardHeader,
     CardTitle,
 } from '@/Components/ui/card';
 import {
     ChartContainer,
     ChartTooltip,
-    ChartTooltipContent,
     type ChartConfig,
 } from '@/Components/ui/chart';
 
 export const description = 'A line chart';
 
-const chartData = [
-    { month: 'January', desktop: 186 },
-    { month: 'February', desktop: 305 },
-    { month: 'March', desktop: 237 },
-    { month: 'April', desktop: 73 },
-    { month: 'May', desktop: 209 },
-    { month: 'June', desktop: 214 },
-];
+// Interface Data Prop
+interface ChartData {
+    month: string;
+    amount: number;
+    full_date?: string;
+}
 
+// Config Warna & Label
 const chartConfig = {
-    desktop: {
-        label: 'Desktop',
-        color: 'hsl(217 91% 60%)',
+    amount: {
+        label: 'Pengeluaran',
+        color: 'hsl(217 91% 60%)', // Biru
     },
 } satisfies ChartConfig;
 
-export function LineChartTransaction() {
+export function LineChartTransaction({ data }: { data: ChartData[] }) {
+    // Helper Format Rupiah
+    const formatRupiah = (value: number) => {
+        return new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            maximumFractionDigits: 0,
+        }).format(value);
+    };
+
     return (
-        <Card className="flex flex-col">
+        <Card className="flex h-full flex-col">
             <CardHeader>
-                <CardTitle>Line Chart</CardTitle>
-                <CardDescription>January - June 2024</CardDescription>
+                <CardTitle>Tren Pengeluaran</CardTitle>
+                <CardDescription>
+                    {data.length > 0
+                        ? `${data[0].month} - ${data[data.length - 1].month}`
+                        : 'No Data'}
+                </CardDescription>
             </CardHeader>
             <CardContent>
-                <ChartContainer config={chartConfig}>
+                <ChartContainer
+                    config={chartConfig}
+                    className="max-h-[300px] w-full"
+                >
                     <LineChart
                         accessibilityLayer
-                        data={chartData}
+                        data={data}
                         margin={{
                             left: 12,
                             right: 12,
+                            top: 10,
+                            bottom: 5,
                         }}
                     >
-                        <CartesianGrid vertical={false} />
+                        <CartesianGrid vertical={false} strokeDasharray="3 3" />
+
                         <XAxis
                             dataKey="month"
                             tickLine={false}
                             axisLine={false}
                             tickMargin={8}
-                            tickFormatter={(value) => value.slice(0, 3)}
+                            // Tampilkan slice 3 huruf pertama jika nama bulan panjang
+                            // Tapi karena controller kirim "Jan 24", ini aman.
+                            tickFormatter={(value) => value}
                         />
+
+                        {/* Custom Tooltip untuk Rupiah */}
                         <ChartTooltip
                             cursor={false}
-                            content={<ChartTooltipContent hideLabel />}
+                            content={({ active, payload }) => {
+                                if (active && payload && payload.length) {
+                                    const item = payload[0].payload;
+                                    return (
+                                        <div className="rounded-lg border bg-background p-2 shadow-sm">
+                                            <div className="text-[0.70rem] uppercase text-muted-foreground">
+                                                {item.full_date || item.month}
+                                            </div>
+                                            <div className="font-bold text-primary">
+                                                {formatRupiah(item.amount)}
+                                            </div>
+                                        </div>
+                                    );
+                                }
+                                return null;
+                            }}
                         />
+
                         <Line
-                            dataKey="desktop"
-                            type="natural"
-                            stroke="var(--color-desktop)"
+                            dataKey="amount" // Sesuai key dari Controller
+                            type="monotone" // 'natural' kadang terlalu melengkung aneh di 0
+                            stroke="var(--color-amount)"
                             strokeWidth={2}
-                            dot={false}
+                            dot={{
+                                r: 4,
+                                fill: 'var(--color-amount)',
+                            }}
+                            activeDot={{
+                                r: 6,
+                            }}
                         />
                     </LineChart>
                 </ChartContainer>

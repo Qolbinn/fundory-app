@@ -32,14 +32,16 @@ import {
     SelectValue,
 } from '@/Components/ui/select';
 import { Textarea } from '@/Components/ui/textarea';
-import { getIconComponent } from '@/Lib/operational-category-config';
+import { getOperationalIconComponent } from '@/Lib/operational-category-config';
 import { cn } from '@/Lib/utils';
+import { DatePicker } from './DatePicker';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
+import { DialogDescription } from '@radix-ui/react-dialog';
 
 interface Props {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    transactionToEdit?: OperationalTransaction | null; // Kalau null = Create
+    transactionToEdit?: OperationalTransaction | null;
 }
 
 export function OperationalDialog({
@@ -49,7 +51,7 @@ export function OperationalDialog({
 }: Props) {
     // 1. Ambil data categories dari Shared Props (HandleInertiaRequests)
     const { options } = usePage<any>().props;
-    const categories = options?.categories || [];
+    const categories = options?.operational_categories || [];
 
     const isEditing = !!transactionToEdit;
 
@@ -85,10 +87,6 @@ export function OperationalDialog({
                     type: transactionToEdit.type as 'INCOME' | 'EXPENSE',
 
                     // 4. Category ID: INI YANG SERING BUG.
-                    // Dari DB dia Integer, tapi Select Value butuh String. Wajib String()
-                    // operational_category_id: String(
-                    //     transactionToEdit.operational_category_id,
-                    // ),
                     operational_category_id:
                         transactionToEdit.operational_category_id
                             ? String(transactionToEdit.operational_category_id)
@@ -152,6 +150,11 @@ export function OperationalDialog({
                     <DialogTitle>
                         {isEditing ? 'Edit Transaksi' : 'Catat Transaksi Baru'}
                     </DialogTitle>
+                    <DialogDescription>
+                        {isEditing
+                            ? 'Perbarui detail transaksi operasional Anda di bawah ini.'
+                            : 'Isi detail transaksi operasional baru Anda di bawah ini.'}
+                    </DialogDescription>
                 </DialogHeader>
 
                 <Form {...form}>
@@ -159,6 +162,23 @@ export function OperationalDialog({
                         onSubmit={form.handleSubmit(onSubmit)}
                         className="space-y-4"
                     >
+                        <FormField
+                            control={form.control}
+                            name="date"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-col">
+                                    <FormLabel>Tanggal Transaksi</FormLabel>
+                                    <FormControl>
+                                        <DatePicker
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
                         {/* TYPE (Income/Expense) */}
                         <FormField
                             control={form.control}
@@ -192,6 +212,21 @@ export function OperationalDialog({
                                             </SelectItem>
                                         </SelectContent>
                                     </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        {/* AMOUNT */}
+                        <FormField
+                            control={form.control}
+                            name="amount"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Jumlah (Rp)</FormLabel>
+                                    <FormControl>
+                                        <Input type="number" {...field} />
+                                    </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -234,7 +269,7 @@ export function OperationalDialog({
                                                     {categories.map(
                                                         (cat: any) => {
                                                             const IconComponent =
-                                                                getIconComponent(
+                                                                getOperationalIconComponent(
                                                                     cat.icon,
                                                                 );
                                                             const isSelected =
@@ -312,21 +347,6 @@ export function OperationalDialog({
                                 </p>
                             )}
                         </div>
-
-                        {/* AMOUNT */}
-                        <FormField
-                            control={form.control}
-                            name="amount"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Jumlah (Rp)</FormLabel>
-                                    <FormControl>
-                                        <Input type="number" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
 
                         {/* TANGGAL (Opsional: Bisa tambah DatePicker Shadcn disini) */}
                         {/* NOTE */}

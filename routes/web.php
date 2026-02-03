@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\AssetCategoryController;
+use App\Http\Controllers\AssetTransactionController;
 use App\Http\Controllers\OperationalCategoryController;
 use App\Http\Controllers\OperationalTransactionController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -19,10 +22,7 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
 
     // --- DASHBOARD UTAMA ---
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard/Operational/OperationalDashboard');
-    })->name('dashboard');
-
+    Route::get('/dashboard', PageController::class . '@showOperationalDashboard')->name('dashboard');
 
     // --- OPERATIONAL TRANSACTIONS ---
     Route::controller(OperationalTransactionController::class)->group(function () {
@@ -42,10 +42,28 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::controller(OperationalCategoryController::class)->group(function () {
         Route::get('/dashboard/operational/category', 'index')
             ->name('operational.category');
-
         Route::post('/operational-category', 'store')->name('operational-categories.store');
         Route::put('/operational-category/{operational_category}', 'update')
             ->name('operational-categories.update');
+    });
+
+    // --- ASSET CATEGORIES ---
+    Route::controller(AssetCategoryController::class)->group(function () {
+        Route::get('/dashboard/asset/category', 'index')
+            ->name('asset.category');
+        Route::post('/asset-category', 'store')->name('asset-categories.store');
+        Route::put('/asset-category/{asset_category}', 'update')
+            ->name('asset-categories.update');
+    });
+
+    Route::controller(AssetTransactionController::class)->group(function () {
+        Route::get('/dashboard/asset/transaction', 'index')
+            ->name('asset.transaction');
+        Route::post('/asset-transaction', 'store')->name('asset-transactions.store');
+        Route::put('/asset-transaction/{asset_transaction}', 'update')
+            ->name('asset-transactions.update');
+        Route::delete('/asset-transaction/destroy/bulk', AssetTransactionController::class . '@bulkDelete')
+            ->name('asset-transactions.bulk-delete');
     });
 });
 

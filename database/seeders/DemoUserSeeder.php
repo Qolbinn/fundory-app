@@ -21,6 +21,8 @@ class DemoUserSeeder extends Seeder
         $this->call([
             OperationalCategorySeeder::class,
             OperationalTransactionSeeder::class,
+            AssetCategorySeeder::class,
+            AssetTransactionSeeder::class,
         ]);
     }
 }

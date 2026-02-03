@@ -16,7 +16,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->string('type'); // Cast ke Enum
-            $table->decimal('target_percentage', 5, 2)->nullable();
+            // $table->decimal('target_percentage', 5, 2)->nullable();
+            $table->boolean('is_rotation')->default(false);
             $table->string('icon')->default('pi-tag'); // Default icon
             $table->string('color')->default('#64748b'); // Default color (Slate)
             $table->timestamps();

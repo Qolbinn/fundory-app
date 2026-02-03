@@ -35,7 +35,12 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'options' => [
-                'categories' => fn() => \App\Models\OperationalCategory::all(),
+                'operational_categories' => fn() => $request->user()
+                    ? \App\Models\OperationalCategory::where('user_id', $request->user()->id)->get()
+                    : [],
+                'asset_categories' => fn() => $request->user()
+                    ? \App\Models\AssetCategory::where('user_id', $request->user()->id)->get()
+                    : [],
             ],
         ];
     }

@@ -51,4 +51,19 @@ class User extends Authenticatable
     {
         return $this->hasMany(OperationalCategory::class);
     }
+
+    public function assetCategories(): HasMany
+    {
+        return $this->hasMany(AssetCategory::class);
+    }
+
+    public function operationalTransactions(): HasMany
+    {
+        return $this->hasMany(OperationalTransaction::class);
+    }
+
+    public function assetTransactions(): HasMany
+    {
+        return $this->hasMany(AssetTransaction::class);
+    }
 }

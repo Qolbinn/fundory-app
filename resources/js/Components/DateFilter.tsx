@@ -116,11 +116,18 @@ export default function DateFilter() {
         },
         {
             label: '3 Bulan Terakhir',
-            getValue: () => ({
-                // Rolling 3 bulan ke belakang dari hari ini
-                from: subMonths(new Date(), 3),
-                to: new Date(),
-            }),
+            // getValue: () => ({
+            //     // Rolling 3 bulan ke belakang dari hari ini
+            //     from: subMonths(new Date(), 3),
+            //     to: new Date(),
+            // }),
+            getValue: () => {
+                const today = new Date();
+                return {
+                    from: startOfMonth(subMonths(today, 2)),
+                    to: endOfMonth(today),
+                };
+            },
         },
         {
             label: 'Tahun Ini',

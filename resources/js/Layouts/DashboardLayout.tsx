@@ -1,4 +1,5 @@
 import { AppSidebar } from '@/Components/app-sidebar';
+import DateFilter from '@/Components/DateFilter';
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -7,7 +8,7 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from '@/Components/ui/breadcrumb';
-import { Separator } from '@/Components/ui/separator';
+import { Separator } from '@/components/ui/separator';
 import {
     SidebarInset,
     SidebarProvider,
@@ -17,11 +18,12 @@ import { PropsWithChildren, ReactNode } from 'react';
 
 interface DashboardLayoutProps extends PropsWithChildren<{
     header?: ReactNode;
+    enableDateFilter?: boolean;
 }> {}
 
 export default function DashboardLayout({
-    // header,
     children,
+    enableDateFilter = false,
 }: DashboardLayoutProps) {
     return (
         <SidebarProvider>
@@ -49,16 +51,11 @@ export default function DashboardLayout({
                                 </BreadcrumbItem>
                             </BreadcrumbList>
                         </Breadcrumb>
+
+                        {enableDateFilter && <DateFilter />}
                     </div>
                 </header>
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-                    {/* <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                        <div className="aspect-video rounded-xl bg-muted/50" />
-                        <div className="aspect-video rounded-xl bg-muted/50" />
-                        <div className="aspect-video rounded-xl bg-muted/50" />
-                    </div>
-                    <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" /> */}
-
                     {children}
                 </div>
             </SidebarInset>
