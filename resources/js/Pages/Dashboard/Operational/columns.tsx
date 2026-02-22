@@ -58,7 +58,7 @@ export const operationalColumns: ColumnDef<OperationalTransaction>[] = [
     },
     {
         id: 'category',
-        accessorKey: 'category',
+        accessorKey: 'category.name',
         header: 'Kategori',
         cell: ({ row }) => {
             const category = row.original.category;
@@ -78,7 +78,6 @@ export const operationalColumns: ColumnDef<OperationalTransaction>[] = [
                 </Badge>
             );
         },
-        filterFn: 'equalsString', // penting
     },
     {
         accessorKey: 'note',

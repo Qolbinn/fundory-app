@@ -75,7 +75,6 @@ export default function OperationalTransaction({ transactions }: IndexProps) {
             <Head title="Transaksi Operasional" />
 
             <DataTableTransaction
-                // columns={columns}
                 columns={operationalColumns}
                 data={transactions}
                 meta={{
@@ -86,6 +85,7 @@ export default function OperationalTransaction({ transactions }: IndexProps) {
                 onBulkDelete={handleBulkDelete}
                 searchKey="note"
                 searchPlaceholder="Cari catatan..."
+                filterKey="category"
             />
 
             {/* Render Modal: SINGLE INSTANCE */}

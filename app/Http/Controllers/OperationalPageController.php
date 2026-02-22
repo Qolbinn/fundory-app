@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Database\Eloquent\Builder;
 
-class PageController extends Controller
+class OperationalPageController extends Controller
 {
     public function showOperationalDashboard(Request $request)
     {

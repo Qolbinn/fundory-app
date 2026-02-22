@@ -48,7 +48,7 @@ const data = {
     navOperationals: [
         {
             name: 'Dashboard Operasional',
-            url: route('dashboard'),
+            url: route('dashboard.operational'),
             icon: Frame,
         },
         {
@@ -65,7 +65,7 @@ const data = {
     navAssets: [
         {
             name: 'Dashboard Asset',
-            url: '#',
+            url: route('dashboard.asset'),
             icon: Frame,
         },
         {
